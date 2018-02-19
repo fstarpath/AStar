@@ -9,6 +9,35 @@ function AStarPathFinder(map, start, end, allowDiagonals) {
     this.start = start;
     this.end = end;
     this.allowDiagonals = allowDiagonals;
+    
+   	var httpRequest = new XMLHttpRequest();
+
+    // call FStar web api to get the winner
+	this.getFStarWinner = function(end, openSet) {
+		var tmpWinner = -1;
+		var endStr = end.i + "," + end.j;
+		var openSetStr = ""; 
+		
+		for (var i = 0; i < openSet.length; i++) {
+			openSetStr += "(" + openSet[i].i + "," + openSet[i].j+ ")";
+		}
+
+		httpRequest.open("get", 
+			"https://fstar.azurewebsites.net/api/Test50x50F2?code=6/a0SaFa2mlL8D0WIIjOeemdo8pnC0PfS1HbZgfNBYp93G/LooIfkQ==&end="
+			+ encodeURI(endStr) + "&openset=" + encodeURI(openSetStr),
+			false);
+		
+		httpRequest.send();
+
+		if (httpRequest.status != 200)
+		{
+			console.log(httpRequest.responseText);
+		}
+
+		tmpWinner = parseInt(httpRequest.responseText);
+		return tmpWinner;
+    }
+    
 
     //This function returns a measure of aesthetic preference for
     //use when ordering the openSet. It is used to prioritise
@@ -51,32 +80,12 @@ function AStarPathFinder(map, start, end, allowDiagonals) {
         if (this.openSet.length > 0) {
 
             // Best next option
-            var winner = 0;
-            for (var i = 1; i < this.openSet.length; i++) {
-                if (this.openSet[i].f < this.openSet[winner].f) {
-                    winner = i;
-                }
-                //if we have a tie according to the standard heuristic
-                if (this.openSet[i].f == this.openSet[winner].f) {
-                    //Prefer to explore options with longer known paths (closer to goal)
-                    if (this.openSet[i].g > this.openSet[winner].g) {
-                        winner = i;
-                    }
-                    //if we're using Manhattan distances then also break ties
-                    //of the known distance measure by using the visual heuristic.
-                    //This ensures that the search concentrates on routes that look
-                    //more direct. This makes no difference to the actual path distance
-                    //but improves the look for things like games or more closely
-                    //approximates the real shortest path if using grid sampled data for
-                    //planning natural paths.
-                    if (!this.allowDiagonals) {
-                        if (this.openSet[i].g == this.openSet[winner].g &&
-                            this.openSet[i].vh < this.openSet[winner].vh) {
-                            winner = i;
-                        }
-                    }
-                }
-            }
+            var winner = this.getFStarWinner(this.end, this.openSet);
+			if (winner < 0) {
+                console.log("FStar error");
+                return 1;
+			}
+            
             var current = this.openSet[winner];
             this.lastCheckedNode = current;
 
