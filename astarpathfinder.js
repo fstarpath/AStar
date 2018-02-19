@@ -10,32 +10,31 @@ function AStarPathFinder(map, start, end, allowDiagonals) {
     this.end = end;
     this.allowDiagonals = allowDiagonals;
     
-   	var httpRequest = new XMLHttpRequest();
+    this.httpRequest = new XMLHttpRequest();
 
     // call FStar web api to get the winner
-	this.getFStarWinner = function(end, openSet) {
-		var tmpWinner = -1;
-		var endStr = end.i + "," + end.j;
-		var openSetStr = ""; 
-		
-		for (var i = 0; i < openSet.length; i++) {
-			openSetStr += "(" + openSet[i].i + "," + openSet[i].j+ ")";
-		}
+    this.getFStarWinner = function(end, openSet) {
+	var tmpWinner = -1;
+	var endStr = end.i + "," + end.j;
+	var openSetStr = ""; 
 
-		httpRequest.open("get", 
-			"https://fstar.azurewebsites.net/api/Test50x50F2?code=6/a0SaFa2mlL8D0WIIjOeemdo8pnC0PfS1HbZgfNBYp93G/LooIfkQ==&end="
-			+ encodeURI(endStr) + "&openset=" + encodeURI(openSetStr),
-			false);
-		
-		httpRequest.send();
+	for (var i = 0; i < openSet.length; i++) {
+		openSetStr += "(" + openSet[i].i + "," + openSet[i].j+ ")";
+	}
 
-		if (httpRequest.status != 200)
-		{
-			console.log(httpRequest.responseText);
-		}
+	this.httpRequest.open("get", 
+		"https://fstar.azurewebsites.net/api/Test50x50F2?code=6/a0SaFa2mlL8D0WIIjOeemdo8pnC0PfS1HbZgfNBYp93G/LooIfkQ==&end="
+		+ encodeURI(endStr) + "&openset=" + encodeURI(openSetStr),
+		false);
 
-		tmpWinner = parseInt(httpRequest.responseText);
-		return tmpWinner;
+	this.httpRequest.send();
+
+	if (this.httpRequest.status != 200) {
+		console.log(this.httpRequest.responseText);
+	}
+
+	tmpWinner = parseInt(this.httpRequest.responseText);
+	return tmpWinner;
     }
     
 
@@ -81,10 +80,10 @@ function AStarPathFinder(map, start, end, allowDiagonals) {
 
             // Best next option
             var winner = this.getFStarWinner(this.end, this.openSet);
-			if (winner < 0) {
+	    if (winner < 0) {
                 console.log("FStar error");
                 return 1;
-			}
+	    }
             
             var current = this.openSet[winner];
             this.lastCheckedNode = current;
