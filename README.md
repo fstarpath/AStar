@@ -1,13 +1,8 @@
-# AStar
+# FStar
 
-AStar example with community contributions.
+FStar example
 
-https://codingtrain.github.io/AStar/
+This is a demonstration of a new pathfinding algorithm on a 2D grid. 
 
-Original source code:
-- https://github.com/CodingTrain/Rainbow-Code/tree/master/challenges/CC_51_astar
-
-Video tutorial:
-- [Part 1](https://www.youtube.com/watch?v=aKYlikFAV4k)
-- [Part 2](https://www.youtube.com/watch?v=EaZxUCWAjb0)
-- [Part 3](https://www.youtube.com/watch?v=aKYlikFAV4k)
+It is implemented in JavaScript using the code from <a href="https://github.com/CodingTrain/AStar"> CodingTrain on github</a>.
+  
