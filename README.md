@@ -17,6 +17,6 @@ Code change
 https://github.com/fstarpath/FStar-test-1/commit/46640d6cfce1a03faf4b5a20fcff2206d0476cb7?diff=split
 
 
-The api key in the source code is for this project only. If you want to test FStar in your own code, please send us a message and ask for a new key. Email: fstarpath at gmail.com
+The api key in the source code is for this project only. If you want to test FStar in your own code, please send us a message and ask for a new key.
 
 
