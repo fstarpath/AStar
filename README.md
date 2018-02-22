@@ -19,7 +19,7 @@ https://github.com/fstarpath/FStar-test-1/commit/46640d6cfce1a03faf4b5a20fcff220
 
 HTTP request
 
-GET http://fstar.azurewebsites.net/api/test50x50f2
+GET https://fstar.azurewebsites.net/api/test50x50f2
 
 Parameters
 end: A comma-separated coordinate of the end node.
