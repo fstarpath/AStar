@@ -4,7 +4,8 @@ FStar example
 
 https://fstarpath.github.io/FStar-test-1/
 
-This is a demonstration of using a new pathfinding algorithm (FStar) on a 2D grid. We have exposed the new algorithm via a web api for people who would like to test it in their own code. 
+This is a demonstration of using a new pathfinding algorithm (FStar) on a 2D grid. We have exposed the new algorithm via a web API for people who would like to test it in their own code. The test API is only for 50x50 grid. However, the algorithm will work for any size.
+
 
 HTTP request
 
