@@ -1,5 +1,11 @@
 # FStar
 
+Note: 
+
+We have temporary disabled the web API. We are implementing a more end to end solution. We will allow user to upload their map to our server.  To find a path between any two points, user will only have to make a single API call. 
+
+
+
 FStar example
 
 https://fstarpath.github.io/FStar-test-1/
