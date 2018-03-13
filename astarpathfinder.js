@@ -10,6 +10,8 @@ function AStarPathFinder(map, start, end, allowDiagonals) {
     this.end = end;
     this.allowDiagonals = allowDiagonals;
     
+    this.httpRequest = new XMLHttpRequest(); 
+    
     //This function returns a measure of aesthetic preference for
     //use when ordering the openSet. It is used to prioritise
     //between equal standard heuristic scores. It can therefore
