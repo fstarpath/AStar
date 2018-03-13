@@ -10,34 +10,6 @@ function AStarPathFinder(map, start, end, allowDiagonals) {
     this.end = end;
     this.allowDiagonals = allowDiagonals;
     
-    this.httpRequest = new XMLHttpRequest();
-
-    // call FStar web api to get the winner
-    this.getFStarWinner = function(end, openSet) {
-	var tmpWinner = -1;
-	var endStr = end.i + "," + end.j;
-	var openSetStr = ""; 
-
-	for (var i = 0; i < openSet.length; i++) {
-		openSetStr += "(" + openSet[i].i + "," + openSet[i].j+ ")";
-	}
-
-	this.httpRequest.open("get", 
-		"https://fstar.azurewebsites.net/api/Test50x50F2?code=6/a0SaFa2mlL8D0WIIjOeemdo8pnC0PfS1HbZgfNBYp93G/LooIfkQ==&end="
-		+ encodeURI(endStr) + "&openset=" + encodeURI(openSetStr),
-		false);
-
-	this.httpRequest.send();
-
-	if (this.httpRequest.status != 200) {
-		console.log(this.httpRequest.responseText);
-	}
-
-	tmpWinner = parseInt(this.httpRequest.responseText);
-	return tmpWinner;
-    }
-    
-
     //This function returns a measure of aesthetic preference for
     //use when ordering the openSet. It is used to prioritise
     //between equal standard heuristic scores. It can therefore
@@ -75,63 +47,49 @@ function AStarPathFinder(map, start, end, allowDiagonals) {
     //returns 1 if goal reached
     //returns -1 if no solution
     this.step = function() {
-
-        if (this.openSet.length > 0) {
-
-            // Best next option
-            var winner = this.getFStarWinner(this.end, this.openSet);
-	    if (winner < 0) {
-                console.log("FStar error");
-                return 1;
-	    }
-            
-            var current = this.openSet[winner];
-            this.lastCheckedNode = current;
-
-            // Did I finish?
-            if (current === this.end) {
-                console.log("DONE!");
-                return 1;
+        var tmpMap = [];
+        for (var i = 0; i < this.map.cols; i++) {
+            tmpMap[i] = [];
+            for (var j = 0; j < this.map.rows; j++) {
+                tmpMap[i][j] = this.map.grid[i][j].wall ? 'X' : '.';
             }
+        }
+        var reqStr = "startNode=" + this.start.i + "," + this.start.j + "&endNode=" + this.end.i + "," + this.end.j;
+        if (allowDiagonals) {
+            reqStr += "&Diagonal=1"
+        }
+        this.httpRequest.open("post",
+            "https://fsfunapp.azurewebsites.net/api/GetFStar2?code=Lci47mGXvnUD/BluvjYMVWLDcMCuRCfYctW4LEvCa33FJAwLG9dGBg==&"
+            + reqStr, 
+            false);
+        this.httpRequest.setRequestHeader("Content-type", "application/json");
 
-            // Best option moves from openSet to closedSet
-            this.removeFromArray(this.openSet, current);
-            this.closedSet.push(current);
+        var tmpData = JSON.stringify({ "map": tmpMap });
+        this.httpRequest.send(tmpData);
 
-            // Check all the neighbors
-            var neighbors = current.getNeighbors();
-
-            for (var i = 0; i < neighbors.length; i++) {
-                var neighbor = neighbors[i];
-
-                // Valid next spot?
-                if (!this.closedSet.includes(neighbor)) {
-                    // Is this a better path than before?
-                    var tempG = current.g + this.heuristic(neighbor, current);
-
-                    // Is this a better path than before?
-                    if (!this.openSet.includes(neighbor)) {
-                        this.openSet.push(neighbor);
-                    } else if (tempG >= neighbor.g) {
-                        // No, it's not a better path
-                        continue;
-                    }
-
-                    neighbor.g = tempG;
-                    neighbor.h = this.heuristic(neighbor, end);
-                    if (!allowDiagonals) {
-                        neighbor.vh = this.visualDist(neighbor, end);
-                    }
-                    neighbor.f = neighbor.g + neighbor.h;
-                    neighbor.previous = current;
-                }
-
-            }
-            return 0;
-            // Uh oh, no solution
-        } else {
-            console.log('no solution');
+        if (this.httpRequest.status != 200) {
+            console.log("FStar error: " + this.httpRequest.responseText);
             return -1;
         }
+
+        var myArrResult = JSON.parse(this.httpRequest.responseText);
+        if (myArrResult.length < 1) {
+            console.log("FStar cannot find a path");
+            return -1;
+        }
+
+        var lastTmpNode = null;
+        for (var i = 0; i < myArrResult.length; i++) {
+
+            var tmpI = myArrResult[i].x;
+            var tmpJ = myArrResult[i].y;
+
+            var current = this.map.grid[tmpI][tmpJ];
+            current.previous = lastTmpNode;
+            lastTmpNode = current;
+        }
+        this.lastCheckedNode = current;
+        console.log("FStar DONE!");
+        return 1;
     }
 }
