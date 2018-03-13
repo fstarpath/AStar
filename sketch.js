@@ -142,6 +142,7 @@ function runpause(button) {
 function restart(button) {
     logTimings();
     clearTimings();
+    status = "";
     initaliseSearchExample(cols, rows);
     pauseUnpause(true);
 }
