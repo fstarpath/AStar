@@ -1,38 +1,71 @@
-# FStar
+# FStar Pathfinding
 
-Note: 
+FStar is a high-speed pathfinding engine for very large grid map. We have created a web API for anyone who are interested to try it for free.  You can see the performance differences between astar and fstar in this youtube video: https://www.youtube.com/watch?v=rS_aC1BwaOY
 
-We have temporary disabled the web API. We are implementing a more end to end solution. We will allow user to upload their map to our server.  To find a path between any two points, user will only have to make a single API call. 
+The web API can be used in two different ways. For dynamic maps, it can be used as shown in the sample code here. The original project is done by <a href="https://github.com/CodingTrain/AStar">CodingTrain</a>. It is a wonderful project that generates interesting maps at runtime. 
 
+If, however, your map is static or very large, you can upload it to the web, and use the “mapURL” parameter to tell the API where it is. We will download the map using the URL. For better performance, we will cache the map in our database. If your map is changed, please call the API with a new mapURL.
 
-
-FStar example
-
-https://fstarpath.github.io/FStar-test-1/
-
-
-This is a demonstration of using a new pathfinding AI engine on a 2D grid. It provides improvement to a key step in the widely used AStar pathfinding algorithm. It helps the AStar algorithm pick a better next node in each path finding iteration. We have exposed this functionality via a web API. Anyone can use it in their own AStar implementation. It can be used to test grids with size up to 50x50. The actual engine, however, will work for grids of any size.
-
-
-HTTP request
-
-GET https://fstar.azurewebsites.net/api/test50x50f2
-
-Parameters
-
-end: A comma-separated coordinate of the end node.
-
-openSet: The current open set of nodes of each path finding step.
-
-code: The user API key (please send us a message for your own test key).
+## Sample usage for static or large map:
+https://fsfunapp.azurewebsites.net/api/GetFStar2?code=Lci47mGXvnUD/BluvjYMVWLDcMCuRCfYctW4LEvCa33FJAwLG9dGBg==&mapurl=https://raw.githubusercontent.com/fstarpath/FStar-test-1/master/300x300w20s515.txt&startnode=3,3&endnode=99,99
 
 
 
 
-We call the algorithm with the new AI improvement FStar. Comparing with the original AStar implementation, we are seeing an average of 50% decrease in the number of iterations that were taken for finding a path. The video below shows the performance difference between AStar and FStar. The test is implemented in JavaScript using the code from <a href="https://github.com/CodingTrain/AStar"> CodingTrain</a>.
+## Sample usage for dynamic maps:
 
-https://www.youtube.com/watch?v=rS_aC1BwaOY
+Example: https://fstarpath.github.io/FStar-Pathfinding-demo/
 
+Code: https://github.com/fstarpath/FStar-Pathfinding-demo/blob/master/astarpathfinder.js
+
+```js
+        var tmpMap = [];
+        for (var i = 0; i < this.map.cols; i++) {
+            tmpMap[i] = [];
+            for (var j = 0; j < this.map.rows; j++) {
+                tmpMap[i][j] = this.map.grid[i][j].wall ? 'X' : '.';
+            }
+        }
+        var reqStr = "startNode=" + this.start.i + "," + this.start.j + "&endNode=" + this.end.i + "," + this.end.j;
+        if (allowDiagonals) {
+            reqStr += "&Diagonal=1"
+        }
+        this.httpRequest.open("post",
+            "https://fsfunapp.azurewebsites.net/api/GetFStar2?code=Lci47mGXvnUD/BluvjYMVWLDcMCuRCfYctW4LEvCa33FJAwLG9dGBg==&"
+            + reqStr, 
+            false);
+        this.httpRequest.setRequestHeader("Content-type", "application/json");
+
+        var tmpData = JSON.stringify({ "map": tmpMap });
+        this.httpRequest.send(tmpData);
+
+        if (this.httpRequest.status != 200) {
+            console.log("FStar error: " + this.httpRequest.responseText);
+            return -1;
+        }
+
+        var myArrResult = JSON.parse(this.httpRequest.responseText);
+        if (myArrResult.length < 1) {
+            console.log("FStar cannot find a path");
+            return -1;
+        }
+
+        var lastTmpNode = null;
+        for (var i = 0; i < myArrResult.length; i++) {
+
+            var tmpI = myArrResult[i].x;
+            var tmpJ = myArrResult[i].y;
+
+            var current = this.map.grid[tmpI][tmpJ];
+            current.previous = lastTmpNode;
+            lastTmpNode = current;
+        }
+        this.lastCheckedNode = current;
+        console.log("FStar DONE!");
+        return 1;
+```
+
+Please note the API key will be changed from time to time. If you want to use the API for long term, please send us a message for your own test key.
 
 
 
