@@ -12,57 +12,57 @@ https://fsfunapp.azurewebsites.net/api/GetFStar2?code=Lci47mGXvnUD/BluvjYMVWLDcM
 
 
 
-## Sample usage for dynamic maps:
+## Sample usage for dynamic map:
 
 Example: https://fstarpath.github.io/FStar-Pathfinding-demo/
 
 Code: https://github.com/fstarpath/FStar-Pathfinding-demo/blob/master/astarpathfinder.js
 
 ```js
-        var tmpMap = [];
-        for (var i = 0; i < this.map.cols; i++) {
-            tmpMap[i] = [];
-            for (var j = 0; j < this.map.rows; j++) {
-                tmpMap[i][j] = this.map.grid[i][j].wall ? 'X' : '.';
-            }
-        }
-        var reqStr = "startNode=" + this.start.i + "," + this.start.j + "&endNode=" + this.end.i + "," + this.end.j;
-        if (allowDiagonals) {
-            reqStr += "&Diagonal=1"
-        }
-        this.httpRequest.open("post",
-            "https://fsfunapp.azurewebsites.net/api/GetFStar2?code=Lci47mGXvnUD/BluvjYMVWLDcMCuRCfYctW4LEvCa33FJAwLG9dGBg==&"
-            + reqStr, 
-            false);
-        this.httpRequest.setRequestHeader("Content-type", "application/json");
+var tmpMap = [];
+for (var i = 0; i < this.map.cols; i++) {
+    tmpMap[i] = [];
+    for (var j = 0; j < this.map.rows; j++) {
+        tmpMap[i][j] = this.map.grid[i][j].wall ? 'X' : '.';
+    }
+}
+var reqStr = "startNode=" + this.start.i + "," + this.start.j + "&endNode=" + this.end.i + "," + this.end.j;
+if (allowDiagonals) {
+    reqStr += "&Diagonal=1"
+}
+this.httpRequest.open("post",
+    "https://fsfunapp.azurewebsites.net/api/GetFStar2?code=Lci47mGXvnUD/BluvjYMVWLDcMCuRCfYctW4LEvCa33FJAwLG9dGBg==&"
+    + reqStr, 
+    false);
+this.httpRequest.setRequestHeader("Content-type", "application/json");
 
-        var tmpData = JSON.stringify({ "map": tmpMap });
-        this.httpRequest.send(tmpData);
+var tmpData = JSON.stringify({ "map": tmpMap });
+this.httpRequest.send(tmpData);
 
-        if (this.httpRequest.status != 200) {
-            console.log("FStar error: " + this.httpRequest.responseText);
-            return -1;
-        }
+if (this.httpRequest.status != 200) {
+    console.log("FStar error: " + this.httpRequest.responseText);
+    return -1;
+}
 
-        var myArrResult = JSON.parse(this.httpRequest.responseText);
-        if (myArrResult.length < 1) {
-            console.log("FStar cannot find a path");
-            return -1;
-        }
+var myArrResult = JSON.parse(this.httpRequest.responseText);
+if (myArrResult.length < 1) {
+    console.log("FStar cannot find a path");
+    return -1;
+}
 
-        var lastTmpNode = null;
-        for (var i = 0; i < myArrResult.length; i++) {
+var lastTmpNode = null;
+for (var i = 0; i < myArrResult.length; i++) {
 
-            var tmpI = myArrResult[i].x;
-            var tmpJ = myArrResult[i].y;
+    var tmpI = myArrResult[i].x;
+    var tmpJ = myArrResult[i].y;
 
-            var current = this.map.grid[tmpI][tmpJ];
-            current.previous = lastTmpNode;
-            lastTmpNode = current;
-        }
-        this.lastCheckedNode = current;
-        console.log("FStar DONE!");
-        return 1;
+    var current = this.map.grid[tmpI][tmpJ];
+    current.previous = lastTmpNode;
+    lastTmpNode = current;
+}
+this.lastCheckedNode = current;
+console.log("FStar DONE!");
+return 1;
 ```
 
 Please note the API key will be changed from time to time. If you want to use the API for long term, please send us a message for your own test key.
