@@ -1,8 +1,10 @@
 # FStar Pathfinding
 
 FStar is a high-speed pathfinding engine for very large grid map. We have created a web API for anyone who are interested to try it for free.  The following videos show the performance differences between the traditional AStar algorithm and the new FStar algorithm: 
-https://www.youtube.com/watch?v=dzGzDVf3mw0
-https://www.youtube.com/watch?v=rS_aC1BwaOY
+
+- [Video 1](https://www.youtube.com/watch?v=dzGzDVf3mw0)
+- [Video 2](https://www.youtube.com/watch?v=rS_aC1BwaOY)
+
 
 
 The web API can be used in two different ways. For dynamic maps, it can be used as shown in the sample code here. The original project is done by <a href="https://github.com/CodingTrain/AStar">CodingTrain</a>. It is a wonderful project that generates interesting maps at runtime. 
