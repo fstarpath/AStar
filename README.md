@@ -5,7 +5,7 @@ FStar is a high-speed pathfinding engine for very large grid map. We have create
 
 The web API can be used in two different ways. For dynamic maps, it can be used as shown in the sample code here. The original project is done by <a href="https://github.com/CodingTrain/AStar">CodingTrain</a>. It is a wonderful project that generates interesting maps at runtime. 
 
-If, however, your map is static or very large, you can upload it to the web, and use the “mapURL” parameter to tell the API where it is. We will download the map using the mapURL. For better performance, we will also cache the map in our database. If your map is changed, please call the API with a new mapURL.
+If, however, your map is static or very large, you can upload it to the web, and use the “mapURL” parameter to tell the API where it is. We will download the map using the mapURL.
 
 ## Sample usage for static or large map (2000x2000):
 
